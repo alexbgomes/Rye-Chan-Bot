@@ -1,0 +1,2 @@
+database:
+  path: "data/bot_database.sqlite3"
