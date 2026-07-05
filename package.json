@@ -1,0 +1,23 @@
+{
+  "name": "rye-chan-bot",
+  "version": "1.0.0",
+  "description": "Rye-Chan-Bot has been rewritten from C# to Python, utilizing the modern `discord.py` API wrapper. This ensures better maintainability, performance on the Raspberry Pi 3B+, and access to modern Discord features like Slash Commands.",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "gh-pages -d terms-of-service"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexbgomes/Rye-Chan-Bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexbgomes/Rye-Chan-Bot/issues"
+  },
+  "homepage": "https://github.com/alexbgomes/Rye-Chan-Bot#readme",
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}
