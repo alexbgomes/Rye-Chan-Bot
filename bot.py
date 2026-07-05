@@ -14,6 +14,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True # Required for welcome/goodbye messages
+intents.presences = True # Required for /playing command
 
 class RyeChanBot(commands.Bot):
     def __init__(self):
@@ -45,7 +46,7 @@ class RyeChanBot(commands.Bot):
 
 if __name__ == "__main__":
     if not TOKEN or TOKEN == "your_token_here":
-        print("Please set your DISCORD_TOKEN in the .env file.")
+        print("DISCORD TOKEN IS MISSING.")
     else:
         bot = RyeChanBot()
         bot.run(TOKEN)

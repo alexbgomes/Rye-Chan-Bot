@@ -49,12 +49,12 @@ class Events(commands.Cog):
             return
 
         # Passive live response if bot is mentioned (similar to Protocol in C# bot)
-        if self.bot.user.mentioned_in(message) and not message.content.startswith(self.bot.command_prefix):
+        if self.bot.user.mentioned_in(message) and not message.content.startswith("!"):
             import random
             responses = [
                 "Suh dude?",
                 "Need help? Just do /help",
-                "Got a bug to report? DM GlexAomes.",
+                "Got a bug to report? DM Glex.",
                 "How's life?",
                 "Hey",
                 "Hiya",
