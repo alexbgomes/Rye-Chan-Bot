@@ -30,7 +30,6 @@ Rye-Chan-Bot has been rewritten from C# to Python, utilizing the modern `discord
 - `/mock`: MoCkS TeXt LiKe ThIs.
 - `/confess`: Submit an anonymous confession instantly.
 - `/morph`: Morphs a word down line by line.
-- `/feels`: Posts a random pepe image.
 - `/pick`: Picks a random choice from a comma-separated list.
 - `/fact`: Posts a random fun fact.
 - `/say`: Makes the bot echo your message.
@@ -54,3 +53,7 @@ Rye-Chan-Bot has been rewritten from C# to Python, utilizing the modern `discord
 - `/translate`: Translates text from source language to destination language.
 - `/translate_langs`: Returns a list of supported languages for translation.
 - `/quote`: Quotes a message in the same channel using its ID.
+- `/listen`: Start listening to a specific user/bot in the current channel.
+- `/unlisten`: Stop listening and remove all mirrors for a specific code.
+- `/mirror`: Mirror messages to this channel using a code.
+- `/unmirror`: Stop mirroring messages to this channel for a specific code.

@@ -31,7 +31,7 @@ class Utility(commands.Cog):
             description="Here are the commands you can use:",
             color=discord.Color.blue()
         )
-        embed.add_field(name="Utility", value="`/ping`, `/about`, `/help`, `/desc`, `/avatar`, `/conv`, `/page`, `/playing`, `/members`, `/trim`, `/whois`, `/tex`, `/translate`, `/translate_langs`, `/quote`", inline=False)
+        embed.add_field(name="Utility", value="`/ping`, `/about`, `/help`, `/desc`, `/avatar`, `/conv`, `/page`, `/playing`, `/members`, `/trim`, `/whois`, `/tex`, `/translate`, `/translate_langs`, `/quote`, `/listen`, `/unlisten`, `/mirror`, `/unmirror`", inline=False)
         embed.add_field(name="Fun", value="`/xkcd`, `/8ball`, `/mock`, `/confess`, `/morph`, `/pick`, `/fact`, `/say`, `/inspiro`, `/dadjoke`, `/urban`", inline=False)
         await interaction.response.send_message(embed=embed)
 
