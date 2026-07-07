@@ -20,18 +20,17 @@ if not os.path.exists(DB_PATH):
     print("Please make sure you are running this script from the root of the Rye-Chan-Bot project.")
     exit(1)
 
-print(f"Preparing to sync {DB_PATH} to {PI_USER}@{PI_HOST}:{PI_PATH}...")
+print(f"Preparing to PUSH {DB_PATH} to {PI_USER}@{PI_HOST}:{PI_PATH}...")
 print("Executing SCP command...")
 
 # scp data/bot_database.sqlite3 pi@192.168.1.xxx:/home/pi/Rye-Chan-Bot/data/bot_database.sqlite3
 command = ["scp", DB_PATH, f"{PI_USER}@{PI_HOST}:{PI_PATH}"]
 
 try:
-    # This will prompt the user for their SSH password if they don't have SSH keys set up.
     subprocess.run(command, check=True)
-    print("Success! Database sync complete.")
+    print("Success! Database push complete.")
 except subprocess.CalledProcessError as e:
-    print(f"\nSync failed. Error code: {e.returncode}")
+    print(f"\nPush failed. Error code: {e.returncode}")
     print("Double check that your PI_HOST IP address is correct and the PI_PATH exists on the Pi.")
 except FileNotFoundError:
     print("\nError: The 'scp' command is not installed or not in your PATH.")
