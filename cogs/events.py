@@ -1,23 +1,31 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
+from utils import database
 
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def get_welcome_channel(self, guild):
-        # Finds a channel named 'welcome-mat' or 'general'
-        for channel in guild.text_channels:
-            if channel.name == "welcome-mat":
-                return channel
-        for channel in guild.text_channels:
-            if channel.name == "general":
-                return channel
-        return guild.system_channel
+    @app_commands.command(name="toggle_greetings", description="Toggles automatic join/leave messages for this channel.")
+    @app_commands.default_permissions(manage_channels=True)
+    async def toggle_greetings(self, interaction: discord.Interaction):
+        current_channel_id = await database.get_greeting_channel(interaction.guild_id)
+        if current_channel_id:
+            # Disable it by setting to None
+            await database.set_greeting_channel(interaction.guild_id, None)
+            await interaction.response.send_message("Automatic greetings have been **disabled** for this server.", ephemeral=True)
+        else:
+            # Enable it in the current channel
+            await database.set_greeting_channel(interaction.guild_id, interaction.channel_id)
+            await interaction.response.send_message(f"Automatic greetings have been **enabled** and bound to {interaction.channel.mention}.", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        channel = self.get_welcome_channel(member.guild)
+        channel_id = await database.get_greeting_channel(member.guild.id)
+        if not channel_id:
+            return
+        channel = member.guild.get_channel(channel_id)
         if channel:
             uCount = member.guild.member_count
             
@@ -36,7 +44,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        channel = self.get_welcome_channel(member.guild)
+        channel_id = await database.get_greeting_channel(member.guild.id)
+        if not channel_id:
+            return
+        channel = member.guild.get_channel(channel_id)
         if channel:
             person = member.nick if member.nick else member.name
             uCount = member.guild.member_count

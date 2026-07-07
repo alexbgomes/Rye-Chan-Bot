@@ -15,19 +15,35 @@ class Mirror(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="listen", description="Start listening to a specific user/bot in this channel.")
-    @app_commands.describe(from_user="The user or bot to listen to.")
+    @app_commands.describe(
+        user="Select a user or bot from the list.",
+        app_id="If it's an app/webhook you can't select, paste its ID here instead."
+    )
     @app_commands.default_permissions(manage_channels=True)
-    async def listen(self, interaction: discord.Interaction, from_user: discord.Member):
+    async def listen(self, interaction: discord.Interaction, user: discord.User = None, app_id: str = None):
+        if not user and not app_id:
+            await interaction.response.send_message("You must provide either a `user` or an `app_id` to listen to.", ephemeral=True)
+            return
+            
+        try:
+            target_id = user.id if user else int(app_id)
+            target_name = user.name if user else f"App/Webhook ({app_id})"
+        except ValueError:
+            await interaction.response.send_message("The `app_id` must be a valid numeric Discord ID.", ephemeral=True)
+            return
+
         code = generate_code()
         # Verify code is unique (though extremely likely)
         while await database.get_listen_by_code(code) is not None:
             code = generate_code()
 
-        await database.create_listen(code, interaction.channel_id, from_user.id)
+        await database.create_listen(code, interaction.channel_id, target_id)
+        
+        target_mention = user.mention if user else f"**{target_name}**"
         
         embed = discord.Embed(
             title="Started Listening",
-            description=f"Listening to {from_user.mention} in {interaction.channel.mention}.\nUse the following code to mirror these messages to another channel:\n\n**`{code}`**",
+            description=f"Listening to {target_mention} in {interaction.channel.mention}.\nUse the following code to mirror these messages to another channel:\n\n**`{code}`**",
             color=discord.Color.green()
         )
         embed.set_footer(text="Keep this code secret!")
@@ -38,7 +54,7 @@ class Mirror(commands.Cog):
             guild_name = interaction.guild.name if interaction.guild else "DMs"
             dm_embed = discord.Embed(
                 title="Listen Configuration Created",
-                description=f"Here is your secret code: **`{code}`**\n\n**Server:** {guild_name}\n**Channel:** {interaction.channel.name}\n**Target:** {from_user.name}",
+                description=f"Here is your secret code: **`{code}`**\n\n**Server:** {guild_name}\n**Channel:** {interaction.channel.name}\n**Target:** {target_name}",
                 color=discord.Color.blue()
             )
             await interaction.user.send(embed=dm_embed)
@@ -114,6 +130,9 @@ class Mirror(commands.Cog):
             name=message.author.display_name, 
             icon_url=message.author.display_avatar.url if message.author.display_avatar else None
         )
+        
+        guild_name = message.guild.name if message.guild else "DMs"
+        quote_embed.set_footer(text=f"Mirrored from {guild_name} / #{message.channel.name}")
         
         embeds = [quote_embed] + message.embeds
         

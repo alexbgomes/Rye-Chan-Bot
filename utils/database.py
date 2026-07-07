@@ -42,6 +42,12 @@ async def setup_db():
                 FOREIGN KEY(code) REFERENCES listen_configs(code) ON DELETE CASCADE
             )
         """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS guild_settings (
+                guild_id INTEGER PRIMARY KEY,
+                greeting_channel_id INTEGER
+            )
+        """)
 
         await db.commit()
 
@@ -105,3 +111,17 @@ async def get_mirrors_for_source(source_channel_id: int, source_user_id: int):
         """, (source_channel_id, source_user_id)) as cursor:
             rows = await cursor.fetchall()
             return [row[0] for row in rows]
+
+async def set_greeting_channel(guild_id: int, channel_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "INSERT INTO guild_settings (guild_id, greeting_channel_id) VALUES (?, ?) ON CONFLICT(guild_id) DO UPDATE SET greeting_channel_id = excluded.greeting_channel_id",
+            (guild_id, channel_id)
+        )
+        await db.commit()
+
+async def get_greeting_channel(guild_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute("SELECT greeting_channel_id FROM guild_settings WHERE guild_id = ?", (guild_id,)) as cursor:
+            row = await cursor.fetchone()
+            return row[0] if row else None

@@ -57,3 +57,4 @@ Rye-Chan-Bot has been rewritten from C# to Python, utilizing the modern `discord
 - `/unlisten`: Stop listening and remove all mirrors for a specific code.
 - `/mirror`: Mirror messages to this channel using a code.
 - `/unmirror`: Stop mirroring messages to this channel for a specific code.
+- `/toggle_greetings`: Toggles automatic join/leave messages for this channel.
