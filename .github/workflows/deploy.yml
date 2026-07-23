@@ -6,8 +6,24 @@ on:
       - master
 
 jobs:
+  create-deployment:
+    name: Create Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+      env: ${{ steps.deployment.outputs.env }}
+    steps:
+      - name: Create Deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: pi-prod
+
   deploy:
     name: Deploy to Raspberry Pi
+    needs: create-deployment
     runs-on: self-hosted
     
     steps:
@@ -32,4 +48,20 @@ jobs:
 
       - name: Restart Systemd Service
         run: |
-          sudo systemctl restart rye-chan
+          cd /home/glex/Documents/GitHub/Rye-Chan-Bot
+          bash scripts/restart_and_verify.sh
+
+  finish_deployment:
+    name: Finish Deployment
+    needs: [create-deployment, deploy]
+    runs-on: ubuntu-latest
+    if: always() && needs.create-deployment.result == 'success'
+    steps:
+      - name: Finish Deployment
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ needs.deploy.result }}
+          env: ${{ needs.create-deployment.outputs.env }}
+          deployment_id: ${{ needs.create-deployment.outputs.deployment_id }}
