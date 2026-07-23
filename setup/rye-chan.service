@@ -1,0 +1,15 @@
+[Unit]
+Description=Rye-Chan Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+User=glex
+Group=glex
+WorkingDirectory=/home/glex/Documents/GitHub/Rye-Chan-Bot
+ExecStart=/home/glex/Documents/GitHub/Rye-Chan-Bot/.venv/bin/python bot.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,35 @@
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to Raspberry Pi
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Environment and Install Dependencies
+        run: |
+          # Sync the checked-out code to the actual bot folder excluding .venv and data so we don't accidentally overwrite them.
+          rsync -av --exclude='.venv' --exclude='data' --exclude='.git' ./ /home/glex/Documents/GitHub/Rye-Chan-Bot/
+
+      - name: Install Dependencies
+        run: |
+          cd /home/glex/Documents/GitHub/Rye-Chan-Bot
+          if [ -d ".venv" ]; then
+            source .venv/bin/activate
+            pip install -r requirements.txt
+          else
+            echo "Error: Virtual environment '.venv' not found in /home/glex/Documents/GitHub/Rye-Chan-Bot!"
+            exit 1
+          fi
+
+      - name: Restart Systemd Service
+        run: |
+          sudo systemctl restart rye-chan
